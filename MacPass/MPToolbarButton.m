@@ -38,6 +38,10 @@
 }
 
 - (void)setControlSize:(NSControlSize)controlSize {
+  if(@available(macOS 10.16,*)) {
+    super.controlSize = controlSize;
+    return;
+  }
   NSImageRep *rep = [self.image bestRepresentationForRect:NSMakeRect(0, 0, 100, 100) context:nil hints:nil];
   CGFloat scale = rep.size.width / rep.size.height;
   switch (controlSize) {
@@ -55,25 +59,7 @@
     default:
       break;
   }
-  if([self.superclass instancesRespondToSelector:@selector(setControlSize:)]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    super.controlSize = controlSize;
-#pragma clang diagnostic pop
-  }
-  else {
-    self.cell.controlSize = controlSize;
-  }
-}
-
-- (NSControlSize)controlSize {
-  if([self.superclass instancesRespondToSelector:@selector(controlSize)]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    return super.controlSize;
-#pragma clang pop
-  }
-  return self.cell.controlSize;
+  super.controlSize = controlSize;
 }
 
 @end
